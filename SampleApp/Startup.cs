@@ -8,6 +8,10 @@ using Microsoft.Extensions.Hosting;
 using SampleApp.DataAccess.Data;
 using SampleApp.DataAccess.Data.Repository.IRepository;
 using SampleApp.DataAccess.Data.Repository;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using SampleApp.Helpers;
+using Microsoft.AspNetCore.Http;
 
 namespace SampleApp
 {
@@ -46,7 +50,23 @@ namespace SampleApp
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                //app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler(builder =>
+                {
+                    builder.Run(async context =>
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                        var error = context.Features.Get<IExceptionHandlerFeature>();
+
+                        if (error != null)
+                        {
+                            context.Response.AddApplicationError(error.Error.Message);
+                            await context.Response.WriteAsync(error.Error.Message);
+                        }
+                    });
+                });
+
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }

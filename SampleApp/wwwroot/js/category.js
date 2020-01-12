@@ -55,9 +55,6 @@ function deleteCategory(url) {
                     } else {
                         toastr.error(data.message);
                     }
-                },
-                error: function (xhr) {
-                    toastr.error(xhr.responseText);
                 }
             });
         }
