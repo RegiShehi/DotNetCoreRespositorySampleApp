@@ -1,4 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@using SampleApp.Utility
+@using Microsoft.AspNetCore.Http
+@using SampleApp.Extensions
+
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -31,13 +37,33 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Category" asp-action="Index">Category</a>
-                            <a class="dropdown-item" asp-area="Admin" asp-controller="Frequency" asp-action="Index">Frequency</a>
                             <a class="dropdown-item" asp-area="Admin" asp-controller="Service" asp-action="Index">Service</a>
+                            <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">User</a>
                         </div>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </li>
+                    <li style="color:white">
+                        @{
+                            var session = HttpContextAccessor.HttpContext.Session.GetObject<List<int>>(SD.SessionCart);
+                            var count = (session == null) ? 0 : session.Count;
+
+                            if (count > 0)
+                            {
+                                <a asp-area="Customer" asp-controller="Cart" asp-action="Index" class="nav-link text-white">
+                                    <i class="fas fa-shopping-cart"></i>&nbsp; (@count)
+                                </a>
+                            }
+                            else
+                            {
+                                <a href="#" class="nav-link text-white">
+                                    <i class="fas fa-shopping-cart"></i>&nbsp; (@count)
+                                </a>
+                            }
+                        }
+                    </li>
+
                 </ul>
                 <partial name="_LoginPartial" />
             </div>

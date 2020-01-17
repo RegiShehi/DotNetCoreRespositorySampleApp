@@ -11,11 +11,14 @@ namespace SampleApp.DataAccess.Data.Repository
             _db = db;
             Category = new CategoryRepository(_db);
             Service = new ServiceRepository(_db);
+            User = new UserRepository(_db);
         }
 
         public ICategoryRepository Category { get; private set; }
 
         public IServiceRepository Service { get; private set; }
+
+        public IUserRepository User { get; private set; }
 
         public void Dispose()
         {

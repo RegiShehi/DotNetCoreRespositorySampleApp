@@ -9,6 +9,8 @@ namespace SampleApp.DataAccess.Data.Repository.IRepository
         ICategoryRepository Category { get; }
         IServiceRepository Service { get; }
 
+        IUserRepository User { get; }
+
         void Save();
     }
 }

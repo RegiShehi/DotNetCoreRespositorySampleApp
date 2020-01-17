@@ -12,6 +12,9 @@ using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using SampleApp.Helpers;
 using Microsoft.AspNetCore.Http;
+using System;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using SampleApp.Utility;
 
 namespace SampleApp
 {
@@ -28,13 +31,22 @@ namespace SampleApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                   options.UseSqlServer(
+                       Configuration.GetConnectionString("DefaultConnection")));
+            services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            services.AddSingleton<IEmailSender, EmailSender>();
+
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddControllersWithViews().AddNewtonsoftJson().AddRazorRuntimeCompilation();
             services.AddRazorPages();
@@ -72,6 +84,7 @@ namespace SampleApp
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseSession();
 
             app.UseRouting();
 
